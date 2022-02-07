@@ -1,0 +1,2 @@
+docker-compose -f ./docker-compose.yml down --volumes
+docker ps -f name=webserver_ci3 -f name=mysql -f name=phpmyadmin

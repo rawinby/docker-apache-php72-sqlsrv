@@ -1,0 +1,54 @@
+version: "3"
+
+# https://hub.docker.com/r/normisg/docker-laravel-sqlsrv-php72/dockerfile
+services:
+  webserver_ci3:
+    container_name: webserver_ci3
+    image: rawinby/apache-php72-sqlsrv
+    ports:
+      - "8053:80"
+    volumes:
+      - ./:/var/www/public
+  mysql:
+    platform: linux/x86_64
+    image: mysql:5.7
+    container_name: mysql
+    volumes:
+      - db_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8 --collation-server=utf8_general_ci
+    restart: always
+    environment:
+      TZ: "Asia/Bangkok"
+      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_DATABASE: test
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: 12345678
+    ports:
+      - 3306:3306
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    links:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: myuser
+      PMA_PASSWORD: 12345678
+    restart: always
+    ports:
+      - 8052:80
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    environment:
+      ADMINER_DESIGN: nette
+    ports:
+      - 8051:8080
+volumes:
+  db_data:
+  
+# docker ps -a
+# docker network ls
+# docker network rm bemis-mapservice-web_default
+# bin/stop && docker rm mapservice && docker network rm bemis-mapservice-web_default
